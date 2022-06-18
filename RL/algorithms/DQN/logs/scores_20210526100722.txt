@@ -1,0 +1,2 @@
+snake_lr00079675_struct200_200_200_eps30
+Params: {'epsilon_decay_linear': 30, 'learning_rate': 0.0007967503516912975, 'first_layer_size': 200, 'second_layer_size': 200, 'third_layer_size': 200, 'episodes': 150, 'memory_size': 2500, 'batch_size': 1000, 'weights_path': 'weights/weights_snake_lr00079675_struct200_200_200_eps30.h5', 'load_weights': False, 'train': True, 'test': True, 'plot_score': True, 'log_path': 'logs/scores_20210526100722.txt', 'display': False, 'speed': 0, 'name_scenario': 'snake_lr00079675_struct200_200_200_eps30'}

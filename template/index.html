@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="neural networks,reinforcement learning,python">
+    <meta name="author" content="Kuzmicheva Olya">
+    <link rel="stylesheet" href="../static/css/style.css" type="text/css">
+    <title>Snake AI</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.css" />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/24c3398291.js" crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../static/js/scripts.js"></script>
+    <script src="../static/js/game.js"></script>
+    <script src="../static/js/socket.js"></script>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <div class="header__outer">
+            <div class="header__inner">
+                <a class="header__logo" href="#">
+                    <img src="../static/images/snakeS.svg" class ="snake__icon" alt="Snake AI">
+                    <h1 class="header__logo__text">nake AI</h1>
+                </a>
+                <div class="switch-button">
+                    <input id="cbLearnPlay" class="switch-button-checkbox" type="checkbox" onclick="switch_games_displays()"></input>
+                    <label class="switch-button-label"><span class="switch-button-label-span">Обучение</span></label>
+                </div>
+                <nav class="nav">
+                    <a class="nav__link" href="index.html#about">О проекте</a>
+                    <a class="nav__link" href="index.html#theory">Теория</a>
+                    <a class="nav__link" href="https://github.com/SoftAvocado/Snake-AI/tree/main/Snake%20AI" target="_blank">Github</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Intro 1 -->
+<div class="intro" id ="intro1">
+    <div class="container">
+        <div class="intro__inner">
+            <div class="parameters">
+                <h2 class="section__title parameters__title">Параметры</h2>
+                <form>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 1)">Коэффициент уменьшения случайности:<br></a>
+                        <input class = "form__par" type="text" id="par_epsilon_decay_linear" name="fname" value="1/400" placeholder="1/140" maxlength="13"><br>
+                        <i class="fas fa-check-circle twoLineLbl_icon"></i>
+                        <i class="fas fa-exclamation-circle twoLineLbl_icon"></i>
+                        <small class="twoLineLbl_message">Error message</small>
+                    </div>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 2)">Коэффициент скорости<br>обучения:<br></a>
+                        <input class = "form__par" type="text" id="par_learning_rate" name="lname" value="0.0001677712073867976" placeholder="0.0001677712073867976" maxlength="20"><br>
+                        <i class="fas fa-check-circle twoLineLbl_icon"></i>
+                        <i class="fas fa-exclamation-circle twoLineLbl_icon"></i>
+                        <small class="twoLineLbl_message">Error message</small>
+                    </div>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 3)">Размер датасета памяти:<br></a>
+                        <input class = "form__par" type="text" id="par_memory_size" name="lname" value="2500" placeholder="2500" maxlength="5"><br>
+                        <i class="fas fa-check-circle oneLineLbl_icon"></i>
+                        <i class="fas fa-exclamation-circle oneLineLbl_icon"></i>
+                        <small class="oneLineLbl_message">Error message</small>
+                    </div>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 4)">Размер батча:<br></a>
+                        <input class = "form__par" type="text" id="par_batch_size" name="lname" value="500" placeholder="500" maxlength="5"><br>
+                        <i class="fas fa-check-circle oneLineLbl_icon"></i>
+                        <i class="fas fa-exclamation-circle oneLineLbl_icon"></i>
+                        <small class="oneLineLbl_message">Error message</small>
+                    </div>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 5)">Количество игр:<br></a>
+                        <input class = "form__par" type="text" id="par_games_amount" name="lname" value="150" placeholder="150" maxlength="5"><br>
+                        <i class="fas fa-check-circle oneLineLbl_icon"></i>
+                        <i class="fas fa-exclamation-circle oneLineLbl_icon"></i>
+                        <small class="oneLineLbl_message">Error message</small>
+                    </div>
+                </form>
+            </div>
+
+            <div id="architecture">
+                <div class="layers_graph">
+                    <h2 class="section__title">Архитектура</h2>
+                    <img src="../static/images/architecture1.png" id="arch__pic">
+                </div>
+                <h3>Настройка скрытых слоев</h3>
+                <div id="architecture_buttons_group">
+                    <div class="small__cont">
+                        <small class="arch_small">Error message</small>
+                    </div>
+                    <div id="architecture_buttons1">
+                        <div class="row entry">
+                            <div class="input-group mb-2 mr-sm-2 col-4">
+                                <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                <input type="text" class="form-control" name="numberOfNodes" step="1" value="100" maxlength="3"/>
+                            </div>
+                            <!-- <i class="fas fa-check-circle arch_warning_icon"></i>
+                            <i class="fas fa-exclamation-circle arch_warning_icon"></i> -->
+                        </div>
+                        <div class="row entry">
+                            <div class="input-group mb-2 mr-sm-2 col-4">
+                                <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                <input type="text" class="form-control" name="numberOfNodes" step="1" value="50" maxlength="3"/>
+                            </div>
+                        </div>
+                        <div class="row entry">
+                            <div class="input-group mb-2 mr-sm-2 col-4">
+                                <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                <input type="text" class="form-control" name="numberOfNodes" step="1" value="20" maxlength="3"/>
+                            </div>
+                        </div>
+                        <div class="row entry">
+                            <div class="input-group mb-2 mr-sm-2 col-4">
+                                <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
+                                <input type="text" class="form-control" name="numberOfNodes" step="1" maxlength="3"/>
+                            </div>
+                        </div>
+                    </div> <!-- architecture_buttons1 end-->
+                </div>
+            </div> <!-- architecture end-->
+            
+            <div class="game">
+                <h2 class="section__title">Игра</h2>
+                <!-- <img src="../static/images/game.png" alt=""> -->
+                <div class="game_interface">
+                    <canvas class = "game_win" id="game_window" width="440" height="440"/></canvas>
+                    <script>switch_games_displays();</script>
+                    <div class="game_params">
+                        <div class="game_par">
+                            <div class="game_par_title">Игра: </div>
+                            <input id = "gp_game" class="game_par_val" type="text" value="0" disabled><br>
+                        </div>
+                        <div class="game_par">
+                            <div class="game_par_title">Шаг: </div>
+                            <input id = "gp_step" class="game_par_val" type="text" value="0" disabled><br>
+                        </div>
+                        <div class="game_par">
+                            <div class="game_par_title">Очков: </div>
+                            <input id = "gp_score" class="game_par_val" type="text" value="0" disabled><br>
+                        </div>
+                        <div class="game_par">
+                            <div class="game_par_title">Рекорд: </div>
+                            <input id = "gp_max" class="game_par_val" type="text" value="0" disabled><br>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="otherParameters">            
+                    <div>
+                        <p>Визуализация игры:</p>
+                        <input type="checkbox" id="par_display" name="scales" onclick="EnableDisableSpeed()"
+                                checked>
+                        <label for="par_display">Отображать интерфейс игры</label>
+                    </div> 
+                    <div class="speed">
+                        <div class="speed__inner" id="speed__inner">
+                            <label id="par_speed_l" for="par_speed">Скорость игры:</label>
+                            <input type="text" id="par_speed" class="speed_button grey-border" name="lname" value="50" placeholder="50" maxlength="3">
+                            <i class="fas fa-check-circle speed_icon"></i>
+                            <i class="fas fa-exclamation-circle speed_icon"></i>
+                            <small>Error message</small>
+                        </div>
+                    </div>
+                </div> <!-- other parameters end-->
+                <input class = "start__btn" id = "start__btn" type="submit" value="Начать обучение">
+            
+            </div> <!-- game end-->
+        </div> <!-- intro inner end-->
+    </div> <!-- container end -->
+</div> <!-- intro 1 end -->
+
+<section class="section" id="result1">
+    <div class="container">
+        <a name="result"></a>
+        <h2 class ="section__title result__title">Результаты</h2>
+        <div class="result__block">
+            <img id = "result__pic" src="" alt="">
+            <input class = "start__btn" id = "download_weights" type="submit" value="Сохранить веса">
+        </div>
+    </div>
+</section>
+
+<!-- Intro 2 -->
+<div class="intro" id ="intro2">
+    <div class="container">
+        <div class="intro__inner">
+            <div class="parameters">
+                <h2 class="section__title parameters__title">Параметры</h2>
+                <form>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 1)">Коэффициент уменьшения случайности:<br></a>
+                        <input class = "form__par" type="text" id="par_epsilon_decay_linear_intro2" name="fname" value="1/140" disabled><br>
+                    </div>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 2)">Коэффициент скорости<br>обучения:<br></a>
+                        <input class = "form__par" type="text" id="par_learning_rate_intro2" name="lname" value="0.0001677712073867976" disabled><br>
+                    </div>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 3)">Размер датасета памяти:<br></a>
+                        <input class = "form__par" type="text" id="par_memory_size_intro2" name="lname" value="2500" disabled><br>
+                    </div>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 4)">Размер батча:<br></a>
+                        <input class = "form__par" type="text" id="par_batch_size_intro2" name="lname" value="500" disabled><br>
+                    </div>
+                    <div class="par__block">
+                        <a class="par__label" onclick="showParamPage(event, 5)">Количество игр:<br></a>
+                        <input class = "form__par" type="text" id="par_games_amount_intro2" name="lname" value="150"><br>
+                        <i class="fas fa-check-circle oneLineLbl_icon"></i>
+                        <i class="fas fa-exclamation-circle oneLineLbl_icon"></i>
+                        <small class="oneLineLbl_message">Error message</small>
+                    </div>
+                </form>
+            </div>
+
+            <div id="architecture_intro2">
+                <div class="layers_graph">
+                    <h2 class="section__title">Архитектура</h2>
+                    <img src="../static/images/architecture1.png" id="arch__pic_intro2">
+                </div>
+
+                <div class="weights_choice">
+                    <h3>Использовать готовые веса</h3>
+                    <div class="weights__buttons">
+                        <div class="weights_btn active_weights">
+                            <button class="fill fill1" id = "weight_btn1">1</button>
+                            <i class="fas fa-check-square result_icon1" id = "res_icon1"></i>
+                        </div>
+                        <div class="weights_btn">
+                            <button class="fill fill2" id = "weight_btn2">2</button>
+                            <i class="fas fa-check-square result_icon1" id = "res_icon2"></i>
+                        </div>
+                        <div class="weights_btn">
+                            <button class="fill fill3" id = "weight_btn3">3</button>
+                            <i class="fas fa-check-square result_icon1" id = "res_icon3"></i>
+                        </div>
+                    </div>
+                    <h3>Загрузить веса</h3>
+
+                    <!-- <script>              
+                    $(document).on("change", ".file-upload-field", function(){ 
+                        let file_name = $(this).val().replace(/.*(\/|\\)/, '');
+                        console.log($(this).val().replace(/.*(\/|\\)/, ''));
+                        if (file_name==""){
+                            $(this).parent(".file-upload-wrapper").attr("data-text", "Выберите файл!");
+                        }
+                        else{
+                            // file_name = file_name.slice(0, 32);
+                            $(this).parent(".file-upload-wrapper").attr("data-text", file_name);
+                        }
+                    });
+                    </script> -->
+
+                    <div class="form__container">
+                        <form class="form_upload">
+                            <div class="file-upload-wrapper" data-text="Выберите файл!" id="upload_form">
+                                <input name="file-upload-field" type="file" class="file-upload-field" value="" id = "weight_btn4">
+                                <i class="fas fa-check-square result_icon2 res_icon4" id = "res_icon4"></i>
+                                <i class="fas fa-check-circle upload_icon"></i>
+                                <i class="fas fa-exclamation-circle upload_icon"></i>
+                                <small class="oneLineLbl_message">Error message</small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> <!-- architecture end-->
+            
+            <div class="game">
+                <h2 class="section__title">Игра</h2>
+                <!-- <img src="../static/images/game.png" alt=""> -->
+                <div class="game_interface">
+                    <canvas class = "game_win" id="game_window_intro2" width="440" height="440"/></canvas>
+                    <script>switch_games_displays();</script>
+                    <div class="game_params">
+                        <div class="game_par">
+                            <div class="game_par_title">Игра: </div>
+                            <input id = "gp_game_intro2" class="game_par_val" type="text" value="0" disabled><br>
+                        </div>
+                        <div class="game_par">
+                            <div class="game_par_title">Шаг: </div>
+                            <input id = "gp_step_intro2" class="game_par_val" type="text" value="0" disabled><br>
+                        </div>
+                        <div class="game_par">
+                            <div class="game_par_title">Очков: </div>
+                            <input id = "gp_score_intro2" class="game_par_val" type="text" value="0" disabled><br>
+                        </div>
+                        <div class="game_par">
+                            <div class="game_par_title">Рекорд: </div>
+                            <input id = "gp_max_intro2" class="game_par_val" type="text" value="0" disabled><br>
+                        </div>
+                    </div>
+                </div>
+                <div class="otherParameters">
+                    <div>
+                        <p>Визуализация игры:</p>
+                        <input type="checkbox" id="par_display_intro2" name="scales" onclick="EnableDisableSpeed()" checked>
+                        <label for="par_display_intro2">Отображать интерфейс игры</label>
+                    </div> 
+                    <div class="speed">
+                        <div class="speed__inner" id="speed__inner_intro2">
+                            <label id="par_speed_1_intro2" for="par_speed_intro2">Скорость игры:</label>
+                            <input type="text" id="par_speed_intro2" class="speed_button grey-border" name="lname" value="50" placeholder="50" maxlength="3">
+                            <i class="fas fa-check-circle speed_icon"></i>
+                            <i class="fas fa-exclamation-circle speed_icon"></i>
+                            <small>Error message</small>
+                        </div>
+                    </div>
+                </div> <!-- other parameters end-->
+                <input class = "start__btn" id = "start__btn_intro2" type="submit" value="Начать игру">
+            </div> <!-- game end-->
+        </div> <!-- intro inner end-->
+    </div> <!-- container end -->
+</div> <!-- intro 2 end -->
+
+<section class="section" id="result2">
+    <div class="container">
+        <a name="result"></a>
+        <h2 class ="section__title result__title">Результаты</h2>
+        <div class="result__block">
+            <img id = "result__pic_intro2" src="" alt="">
+        </div>
+    </div>
+</section>
+
+<section class="section about grey">
+    <div class="container">
+        <a name="about"></a>
+        <div class="section__icon">
+            <img class = "section__icon__pic" src="../static/images/snakeSection.svg">
+        </div>
+        
+        <div class="section__title">
+           <h1>О Проекте</h1>
+        </div>
+        <div class="section__text">
+            <p>Snake AI — образовательный веб-сайт по обучению нейронных сетей с подкреплением на примере игры Змейка.</p>
+
+            <p>Существует два режима работы Snake AI: "Обучение" и "Игра", выбрать которые можно переключателем в верхней части сайта. Режим "Обучение" позволяет настраивать параметры нейронной сети и запустить обучение. Режим "Игра" позволяет выбрать веса нейронной сети и запустить игру. </p>
+
+            <table class="about__table">
+                <tr>
+                    <th><h2>Обучение</h2></th>
+                    <th><h2>Игра</h2></th>
+                </tr>
+                <tr>
+                    <td><p>1) Настройте параметры нейронной сети. Настройте четыре параметра нейронной сети: коэффициент уменьшения случайности, коэффициент скорости обучения, размер датасета памяти, размер батча и количество игр. </p></th>
+                    <td><p>1) Выберите веса. Используете готовые веса или же загрузите свои веса.</p></td>
+                </tr>
+                <tr>
+                    <td><p>2) Настройте архитектуру нейронной сети. Определите количество скрытых слоев, а также число нейронов в них.</p></td>
+                    <td><p>2) Настройте отображение интерфейса. Выберите, нужно ли отображать интерфейс игры, а также скорость игры. Отображение интерфейса замедляет процесс игры, но позволяет видеть прогресс агента. </p></td>
+                </tr>
+                <tr>
+                    <td><p>3) Настройте отображение интерфейса. Выберите, нужно ли отображать интерфейс игры, а также скорость игры. Отображение интерфейса замедляет процесс обучения, но позволяет видеть прогресс агента.</p></td>
+                    <td><p>3) Нажмите "Начать игру". Подождите, пока игра будет окончена - это может занять некоторое время, или же прервите игру, нажав кнопку "Остановить игру".</p></td>
+                </tr>
+                <tr>
+                    <td><p>4) Нажмите "Начать обучениние". Подождите, пока обучение будет окончено - это может занять до получаса (в зависимости от выбранных параметров), или же прервите обучение, нажав кнопку "Остановить обучение".</p></td>
+                    <td><p>4) Прочитайте отчет по игре. Сохраните отчет.</p></td>
+                </tr>
+                <tr>
+                    <td><p>5) Сохраните веса.</p></td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <!-- <div class="double__text">
+                <div class="text_1">
+                    <h2>Обучение</h2>
+                    <p>1) Настройте параметры нейронной сети. Настройте четыре параметра нейронной сети: коэффициент уменьшения случайности, коэффициент скорости обучения, размер датасета памяти и размер батча. </p>
+                    <p>2) Настройте архитектуру нейронной сети. Определите количество скрытых слоев, а также число нейронов в них.</p>
+                    <p>3) Настройте отображение интерфейса. Выберите, нужно ли отображать интерфейс игры, а также скорость игры. Отображение интерфейса замедляет процесс обучения, но позволяет видеть прогресс агента.</p>
+                    <p>4) Нажмите "Начать обучениние". Подождите, пока обучение будет окончено - это может занять некоторое время, или же прервите обучение, нажав кнопку "Остановить обучение".</p>
+                    <p>5) Сохраните веса.</p>
+                </div>
+                <div class="text_2">
+                    <h2>Игра</h2>
+                    <p>1) Выберите веса. Используете готовые веса или же загрузите свои веса.</p>
+                    <p>2) Настройте отображение интерфейса. Выберите, нужно ли отображать интерфейс игры, а также скорость игры. Отображение интерфейса замедляет процесс игры, но позволяет видеть прогресс агента. </p>
+                    <p>3) Нажмите "Начать игру". Подождите, пока игра будет окончена - это может занять некоторое время, или же прервите игру, нажав кнопку "Остановить игру".</p>
+                    <p>4) Прочитайте отчет по игре. Сохраните отчет.</p>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</section>
+
+<a name="par_theory"></a> 
+<section class="section">
+    <div class="container">       
+        <div class="theory__inner">
+            <div class="section__title">
+                <a name="theory"></a>
+                <h1>Теория</h1>
+             </div>
+             <nav class="side-nav">      
+                 <ul class="nav-menu" id="nav-menu-stick">              
+                   <li id="tnav1" class="nav-item" onclick="showContent(event, 'tnav1')"><a href="#"><span class="menu-text">Нейронная сеть</span></a></li>
+                   <li id="tnav2" class="nav-item active" onclick="showContent(event, 'tnav2')"><a href="#"><span class="menu-text">Обучение с подкреплением</span></a></li>
+                   <li id="tnav3" class="nav-item" onclick="showContent(event, 'tnav3')"><a href="#"><span class="menu-text">Q-обучение</span></a></li>
+                   <li id="tnav4" class="nav-item" onclick="showContent(event, 'tnav4')"><a href="#"><span class="menu-text">DQN</span></a></li>
+                   <li id="tnav5" class="nav-item" onclick="showContent(event, 'tnav5')"><a href="#"><span class="menu-text">Параметры НН</span></a></li>
+                 </ul>
+     
+                 <div class="theory__content">
+                     <div id="theory1">
+                         <h1 class="theory__title">Нейронная сеть</h1>
+                         <p><i>Нейронная сеть</i> — это, в первую очередь, последовательность нейронов.</p>
+                         <p><i>Нейрон</i> — это несложный автомат, преобразующий входные сигналы в выходной сигнал. При этом моделируются:</p>
+                         <ol>
+                             <li><p><i>Передаточная функция (функция активации)</i>, определяющая условия возбуждения нейрона в зависимости от силы полученных сигналов. Обычно имеет область значений [-1;1] или [0,1]. Наиболее известные виды этой функции: линейная (выходной сигнал нейрона равен его потенциалу), пороговая (нейрон активен или неактивен), многопороговая (выходной сигнал может принимать одно из q значений, определяемых q-1 порогом внутри предельных значений), сигмоидная;</p></li>
+                             <li><p>Сила полученного сигнала, которая умножается на некоторое число. Это число называется <i>весом</i> синапса или весом соответствующего входу нейрона.</p></li>
+                             <li><p>Число входных нейронов;</p></li>
+                             <li><p>Число выходных нейронов.</p></li>
+                         </ol>
+                         <img src="../static/images/t_model.png" class = "t__pic" id ="pic-t_model" alt="">
+                         <div class="pic__description">Математическая модель нейрона</div>
+                         <p>На рисунке сигналы силы x1, x2, ..., xn, поступая на синапсы, преобразуются линейным образом, т.е. к телу нейрона поступают сигналы силы w1*x1, w2*x2, ..., wn*xn (здесь wi — веса соответствующих синапсов).</p>
+                         <p>Для удобства к нейрону добавляется еще один вход (и еще один вес w0), считая, что на этот вход всегда подается сигнал силы 1. В теле нейрона проис-ходит суммирование сигналов</p>
+                         <img src="../static/images/t_formula1.png" class = "t__pic" alt="">
+                         <p>Затем к сумме применяется некоторая фиксированная передаточная функция f и на выход выдается сигнал силы Y = f(S).</p>
+                         <p>Обычно сеть состоит из входного слоя нейронов, выполняющего задачу распределения входных сигналов остальным нейронам и не производящего никаких вычислений; одного или несколько скрытых слоев вычислительных нейронов и одного выходного слоя. В литературе нет единообразия относительно того, как считать число слоев в многослойных нейронных сетях. Одни предлагают считать число слоев, включая не суммирующий входной слой, другие – считать, только слои, выполняющие суммирование. </p>
+                         <img src="../static/images/t_nn.png" class = "t__pic" alt="">
+                         <div class="pic__description">Модель нейронной сети</div>
+                         <p>Многослойная нейронная сеть имеет потенциал моделировать функцию практически любой степени сложности, при этом число слоев и число элементов в каждом слое определяют сложность функции. Одним из важнейших вопросов при конструировании нейронных сетей является определение числа промежуточных слоев и числа элементов в них. Строгой теории на эту тему пока не существует, поэтому эти данные, как правило, подбираются экспериментально или по рекомендациям статьей на соответствующую тему.</p>
+     
+                     </div>
+                     <div id="theory2">
+                         <h1 class="theory__title">Обучение с подкреплением</h1>
+                         <p><i>Обучение с подкреплением</i> — это подход, основанный на Марковском процессе принятия решений, который моделирует принятие решения в ситуациях, где результаты частично случайны и частично под контролем лица, принимающего решения. </p>
+                         <p>Традиционные подходы машинного обучения — с учителем и без учителя. При <i>обучении с учителем</i> нейронная сеть обучается на размеченном наборе данных. Используя множество объектов и множество возможных ответов, она находит зависимость между ними и учится предсказывать ответы для других объектов. При <i>обучении без учителя</i>, набор размеченных данных отсутствует, то есть для множества объектов не указано множество решений. В этом случае, нейронная сеть пытается самостоятельно найти корреляции в данных, извлекая полезные признаки и анализируя их. Таким образом, для традиционных подходов требуется наличие размеченных или неразмеченных входных данных, чего в нашем случае нет.</p>
+                         <p>В обучении с подкреплением есть два основных компонента: <i>среда</i> (игра) и <i>агент</i> (нейронная сеть, управляющая змейкой). Агент воздействует на среду, а среда воздействует на агента - происходит обратная связь, в результате которой агент старается принимать такие действия, чтобы получить максимальный и долговременный выигрыш. Каждый раз, когда агент выполняет действие, среда выдает ему <i>вознаграждение</i>, которое может быть положительным или отрицательным в зависимости о того, насколько успешное действие было совершено. Цель агента – узнать, какие действия максимизируют вознаграждения при определенных состояниях. </p>
+                         <img src="../static/images/t_rlearning_pic.png" class = "t__pic" alt="">
+                         <div class="pic__description">Взаимодействие среды и агента</div>
+                         <p>Обучение с подкреплением можно реализовать различными алгоритмами. Одни из наиболее популярных – это метод Монте-Карло, Q-обучение, глубокое Q-обучение, SARSA (State–action–reward–state–action). В данном проекте рассматривается алгоритм глубокого Q-обучения.</p>
+     
+                     </div>
+                     <div id="theory3">
+                         <h1 class="theory__title">Q-обучение нейронной сети</h1>
+                         <p>Существует несколько вариаций Q-обучения: стандартное Q-обучение и глубокое Q-обучение. Так как глубокое Q-обучение во многом основывается на стандартном, сначала опишем его.</p>
+                         <p><i>Q-обучение (Q-learning)</i> — метод, применяемый в искусственном интеллекте при агентном подходе. На основе получаемого от среды вознаграждения агент формирует функцию полезности Q, что впоследствии дает ему возможность уже не случайно выбирать стратегию поведения, а учитывать опыт предыдущего взаимодействия со средой.</p>
+                         <p>Функция полезности Q принимает 2 аргумента: действие и состояние. <i>Состояния (states)</i> – это массив, содержащий некоторые параметры, описывающие окружающую среду, которые агент получает на каждом шаге (например, в какой стороне еда и есть ли рядом стена). <i>Действия</i> описывают возможные ходы агента (например, повернуть налево или направо или идти прямо).</p>
+                         <p>Агент принимает решения с помощью Q-таблицы. <i>Q-таблица</i> — это матрица, которая соотносит состояние агента с возможными действиями, которые агент может предпринять. Значения в таблице — это вероятность успеха действия, которая в процессе обучения будет основываться на наградах. Так, в состоянии 1 агенту будет лучше пойти вверх.</p>
+                         <img src="../static/images/t_qlearning.png" class = "t__pic" alt="">
+                         <div class="pic__description">Q-таблица</div>
+                         <p>Каждое значение этой таблицы высчитывается по <i>уравнению Беллмана</i> (также известное как уравнение динамического программирования):</p>
+                         <img src="../static/images/t_belman.png" class = "t__pic" alt="">
+                         <ul>
+                             <li>s – состояние (state),</li>
+                             <li>a – действие (action),</li>
+                             <li>s’ – новое состояние,</li>
+                             <li>a’ – действия для нового состояния,</li>
+                             <li>Q – текущее Q значение,</li>
+                             <li>r – награда,</li>
+                             <li>α – скорость обучения,</li>
+                             <li>γ - ставка дисконтирования (discount rate),</li>
+                             <li>maxQ’ – максимальное Q-значение при новом состоянии.</li>
+                         </ul>
+                         <p>Алгоритм Q-обучения описан на рисунке ниже. Вначале работы алгоритма, значения Q-таблицы инициализируются фиксированными значени-ями (обычно выбираются произвольные числа). При каждом ходе агент выбирает действие, получает награду и входит в новое состояние, после чего обновляется Q-значение. Алгоритм заключается в обновлении значений по уравнению Беллмана. </p>
+                         <img src="../static/images/t_dqnalg.png" class = "t__pic" alt="">
+                         <div class="pic__description">Алгоритм Q-обучения</div>
+                         <p>Проблема Q-обучения заключается в способе хранения и обработки Q-значений – табличном. Когда количество состояний и действий довольно велико, таблица становится слишком большой, обработка ее значений занимает много времени и замедляет работу агента.</p>
+                     </div>
+                     <div id="theory4">
+                         <h1 class="theory__title">Глубокое Q-обучение нейронной сети (DQN)</h1>
+                         <p><i>Глубокое Q-обучение (Deep Q-learning, DQN)</i> – вариация Q-обучения с использованием нейронной сети. Нейронная сеть используется для аппроксимации функции Беллмана. Состояния принимаются как входной слой, а действия – как выходной слой. Некоторые параметры должны сохраняться вручную (состояние, действие, следующее состояние, награда) для обучения нейронной сети.  В этом случае, максимальное значение, вычисленное нейронной сетью, будет определять следующее действие.</p>
+                         <p>В алгоритме Q-обучения используются такие понятия, как опыт, датасет памяти, состоящий из опыта, и воспроизведение памяти. <i>Опыт</i> – это список, инициируемый значениями: текущее состояние, действие, награда, следующее состояние. Мы сохраняем текущий опыт агента в <i>датасете "память"</i>. Из этой памяти в последствии будут случайным образом выбираться данные для обучения нейронной сети.</p>
+                         <p>Алгоритм Q-обучения представлен на рисунке ниже. Для каждой игры алгоритм инициирует игру, игрока и еду дефолтными значениями, после чего, пока не закончится игра, выполняется ряд действий, собирающий данные для обучения нейронной сети. Важным моментом при этом является задание значения Эпсилон. При игровом режиме, Эпсилон всегда инициируется значением 0.01, при котором выбор действия почти всегда будет основан на предсказаниях. При тренировочном режиме, эпсилон сначала близок к единице, но с увеличением количества игр будет стремиться к нулю, что позволяет по началу больше основываться на случайном выборе действий, а в конце – больше основываться на предсказании.</p>
+                         <img src="../static/images/t_dqnalg1.png" class = "t__pic" alt="">
+                         <div class="pic__description">DQN алгоритм</div>
+                     </div>
+                     <div id="theory5">
+                         <h1 class="theory__title">Параметры нейронной сети</h1>
+                         <a name="par1"></a>
+                         <p><i id="t_par1">Коэффициент уменьшения случайности</i> – скорость уменьшения случайности действий (эпсилон Е). E=1 - действие полностью случайно, E=0 - действие не выбирается случайным образом. Обычно обучение начинают с больших значений E (0.9 - 1) и постепенно сокращают до меньшего значения (0.1 и меньше).</p>
+                         <a name="par2"></a>
+                         <p><i id="t_par2">Коэффициент скорости обучения</i> – это параметр градиентных алгоритмов обучения нейронных сетей, позволяющий управлять величиной коррекции весов на каждой итерации. При малых значениях коэффициента (0,1 - 0,3), шаг коррекции весов будет небольшим - высокая точность, но медленный алгоритм. При больших значениях (0,7 - 1), шаг коррекции будет большим - быстрый алгоритм, но невысокая точность.</p>
+                         <a name="par3"></a>
+                         <p><i id="t_par3">Размер датасета памяти</i> – датасет, формируемых в процессе обучения, из которого случайным образом в размере батча выбираются данные для обучения нейронной сети. </p>
+                         <a name="par4"></a>
+                         <p><i id="t_par4">Размер батча</i> – максимальное количество данных, на которых будет тренироваться нейронная сеть после каждой игры. </p>
+                         <p><i id="t_par5">Количество игр</i> – параметр, определяющий длительность обучения. Игра считается законченной, когда змейка ударяется о препятствие. </p>
+                     </div>
+                 </div> <!--theory__content end-->
+             </nav> <!--side-nav end -->
+        </div><!--theory__innder end -->
+    </div> <!-- container end-->
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="copyright">
+            © 2022 Snake AI by <span>Olya K</span>
+        </div>
+    </div><!-- container END -->
+</footer>
+
+</body>
+</html>
