@@ -39,7 +39,7 @@
                 <nav class="nav">
                     <a class="nav__link" href="index.html#about">О проекте</a>
                     <a class="nav__link" href="index.html#theory">Теория</a>
-                    <a class="nav__link" href="https://github.com/SoftAvocado/Snake-AI/tree/main/Snake%20AI" target="_blank">Github</a>
+                    <a class="nav__link" href="https://github.com/SoftAvocado/Snake-AI" target="_blank">Github</a>
                 </nav>
             </div>
         </div>
@@ -55,7 +55,7 @@
                 <form>
                     <div class="par__block">
                         <a class="par__label" onclick="showParamPage(event, 1)">Коэффициент уменьшения случайности:<br></a>
-                        <input class = "form__par" type="text" id="par_epsilon_decay_linear" name="fname" value="1/400" placeholder="1/140" maxlength="13"><br>
+                        <input class = "form__par" type="text" id="par_epsilon_decay_linear" name="fname" value="1/140" placeholder="1/140" maxlength="13"><br>
                         <i class="fas fa-check-circle twoLineLbl_icon"></i>
                         <i class="fas fa-exclamation-circle twoLineLbl_icon"></i>
                         <small class="twoLineLbl_message">Error message</small>
@@ -469,7 +469,7 @@
                              <li>γ - ставка дисконтирования (discount rate),</li>
                              <li>maxQ’ – максимальное Q-значение при новом состоянии.</li>
                          </ul>
-                         <p>Алгоритм Q-обучения описан на рисунке ниже. Вначале работы алгоритма, значения Q-таблицы инициализируются фиксированными значени-ями (обычно выбираются произвольные числа). При каждом ходе агент выбирает действие, получает награду и входит в новое состояние, после чего обновляется Q-значение. Алгоритм заключается в обновлении значений по уравнению Беллмана. </p>
+                         <p>Алгоритм Q-обучения описан на рисунке ниже. Вначале работы алгоритма, значения Q-таблицы инициализируются фиксированными значениями (обычно выбираются произвольные числа). При каждом ходе агент выбирает действие, получает награду и входит в новое состояние, после чего обновляется Q-значение. Алгоритм заключается в обновлении значений по уравнению Беллмана. </p>
                          <img src="../static/images/t_dqnalg.png" class = "t__pic" alt="">
                          <div class="pic__description">Алгоритм Q-обучения</div>
                          <p>Проблема Q-обучения заключается в способе хранения и обработки Q-значений – табличном. Когда количество состояний и действий довольно велико, таблица становится слишком большой, обработка ее значений занимает много времени и замедляет работу агента.</p>
